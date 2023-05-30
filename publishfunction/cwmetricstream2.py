@@ -39,7 +39,7 @@ def lambda_handler(event, context):
             event_timestamp = record['dynamodb']['NewImage']['EventTimestamp']['N']
             timestamp = float(event_timestamp) / 1000
             event_time = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%dT%H:%M:%S')
-            print('event_time=' + event_time)
+            print(f'event_time={event_time}')
             metric_type =  record['dynamodb']['NewImage']['MetricType']['S']
             is_metric_int = isWholeNumber(metric_type)
             for metric_detail in record['dynamodb']['NewImage']['MetricDetails']['L']:
@@ -60,11 +60,11 @@ def lambda_handler(event, context):
                 }
                 metricData.append(metricDataItem)
             namespace = prettyUp(metric_type)
-            print('metrics to cwc = {}'.format(metricData))
+            print(f'metrics to cwc = {metricData}')
             cwc=boto3.client('cloudwatch')
             response = cwc.put_metric_data(Namespace=namespace,MetricData=metricData)
             print(response)
         except: # skip when records are removed via TTL
-            print('Skip removed records ({})'.format(sys.exc_info()[0]))
-            #raise
+            print(f'Skip removed records ({sys.exc_info()[0]})')
+                    #raise
     return 'Successfully processed records.'

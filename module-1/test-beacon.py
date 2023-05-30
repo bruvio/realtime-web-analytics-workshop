@@ -20,16 +20,16 @@ def getEvent():
   return events[random.randint(0,6)]
 
 def getPage():
-  return 'page_' + str(random.randint(1,100)) + '.html'
+  return f'page_{random.randint(1, 100)}.html'
 
 def getUser():
-  return 'user' + str(random.randint(1,1000)) 
+  return f'user{random.randint(1, 1000)}' 
 
 def getReferer():
-  return 'referer_' + str(random.randint(1,20))
+  return f'referer_{random.randint(1, 20)}'
 
 def getUserAgent():
-  return 'python_manual_agent_' + str(random.randint(1,20))
+  return f'python_manual_agent_{random.randint(1, 20)}'
 
 def getIntMetricName():
   custom_metrics = {
@@ -67,7 +67,7 @@ def getFloatMetricValue():
   return str(random.random() * random.randint(0,100))
 
 def getStringMetricValue():
-  return  "dummy_string_value_" + str(random.random() * random.randint(0,10)) 
+  return f"dummy_string_value_{str(random.random() * random.randint(0, 10))}" 
 
 parser = argparse.ArgumentParser()
 parser.add_argument("target", help="<http...> the http(s) location to send the GET request")
@@ -81,19 +81,19 @@ s = requests.Session()
 while (i < int(args.calls)):
   time.sleep(float(args.delay))
   random_metric = random.randint(0,3)
-  if (random_metric == 0):
+  if random_metric == 0:
     headers = {'event' : getEvent(), 'clientid' : getUser(), 'page' : getPage(), 'Referer' : getReferer() }
-  if (random_metric == 1):
+  elif random_metric == 1:
     headers = {'event' : getEvent(), 'clientid' : getUser(), 'page' : getPage(), 'Referer' : getReferer(), 'custom_metric_name' : getIntMetricName(), 'custom_metric_int_value' : getIntMetricValue() }
-  if (random_metric == 2):
+  elif random_metric == 2:
     headers = {'event' : getEvent(), 'clientid' : getUser(), 'page' : getPage(), 'Referer' : getReferer(), 'custom_metric_name' : getFloatMetricName(), 'custom_metric_float_value' : getFloatMetricValue() }
-  if (random_metric == 3):
+  elif random_metric == 3:
     headers = {'event' : getEvent(), 'clientid' : getUser(), 'page' : getPage(), 'Referer' : getReferer(), 'custom_metric_name' : getStringMetricName(), 'custom_metric_string_value' : getStringMetricValue() }
-  r = s.post(args.target + '?call=' + str(i),headers=headers)
+  r = s.post(f'{args.target}?call={i}', headers=headers)
   #r = requests.get(args.target)
-  if(r.status_code==200):
-    sys.stdout.write( str(i) + "-")
+  if (r.status_code==200):
+    sys.stdout.write(f"{i}-")
   else:
-    sys.stdout.write( str(i) + "---->" + str(r.status_code) + "\n")
+    sys.stdout.write(f"{i}---->{r.status_code}" + "\n")
   sys.stdout.flush()
   i+=1
