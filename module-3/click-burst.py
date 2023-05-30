@@ -12,16 +12,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument("target", help="<http...> the http(s) location to send the GET request")
 
 args = parser.parse_args()
-i = 0
 s = requests.Session()
 
-while (i < 540):
+for i in range(540):
   time.sleep(0.3)
   headers = { 'event' : 'click' }
-  r = s.post(args.target + '?call=' + str(i),headers=headers)
-  if(r.status_code==200):
-    sys.stdout.write( str(i) + "-")
+  r = s.post(f'{args.target}?call={i}', headers=headers)
+  if (r.status_code==200):
+    sys.stdout.write(f"{i}-")
   else:
-    sys.stdout.write( str(i) + "---->" + str(r.status_code) + "\n")
+    sys.stdout.write(f"{i}---->{r.status_code}" + "\n")
   sys.stdout.flush()
-  i+=1
